@@ -154,56 +154,73 @@ public class ChangePasswordActivity extends AppCompatActivity {
         }
 
         if (isValid) {
-            // Kiểm tra mật khẩu cũ và cập nhật mật khẩu mới
-            databaseReference.orderByChild("dangNhap").equalTo(currentUsername)
-                    .addListenerForSingleValueEvent(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                            if (dataSnapshot.exists()) {
-                                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                                    DangKi.User user = snapshot.getValue(DangKi.User.class);
-                                    if (user != null && user.matKhau.equals(oldPassword)) {
-                                        // Cập nhật mật khẩu mới
-                                        snapshot.getRef().child("matKhau").setValue(newPassword)
-                                                .addOnSuccessListener(aVoid -> {
-                                                    AlertDialog.Builder builder = new AlertDialog.Builder(ChangePasswordActivity.this);
-                                                    builder.setTitle("Thành công")
-                                                            .setMessage("Đổi mật khẩu thành công!")
-                                                            .setIcon(R.drawable.ic_check_green)
-                                                            .setPositiveButton("OK", (dialog, which) -> finish())
-                                                            .setCancelable(false)
-                                                            .show();
-                                                })
-                                                .addOnFailureListener(e -> {
-                                                    AlertDialog.Builder builder = new AlertDialog.Builder(ChangePasswordActivity.this);
-                                                    builder.setTitle("Lỗi")
-                                                            .setMessage("Đổi mật khẩu thất bại: " + e.getMessage())
-                                                            .setPositiveButton("OK", (dialog, which) -> dialog.dismiss())
-                                                            .show();
-                                                });
-                                    } else {
-                                        tvErrorOldPassword.setText("Mật khẩu cũ không đúng");
-                                        tvErrorOldPassword.setVisibility(View.VISIBLE);
-                                    }
-                                }
-                            } else {
-                                AlertDialog.Builder builder = new AlertDialog.Builder(ChangePasswordActivity.this);
-                                builder.setTitle("Lỗi")
-                                        .setMessage("Không tìm thấy thông tin tài khoản!")
-                                        .setPositiveButton("OK", (dialog, which) -> dialog.dismiss())
-                                        .show();
-                            }
-                        }
+            // Hiển thị dialog xác nhận
+            AlertDialog.Builder confirmDialog = new AlertDialog.Builder(this);
+            confirmDialog.setTitle("Xác nhận")
+                    .setMessage("Bạn có chắc chắn muốn đổi mật khẩu mới?")
+                    .setPositiveButton("Có", (dialog, which) -> {
+                        // Nếu người dùng chọn "Có", thực hiện đổi mật khẩu
+                        changePassword(oldPassword, newPassword);
+                    })
+                    .setNegativeButton("Không", (dialog, which) -> {
+                        // Nếu người dùng chọn "Không", đóng dialog và không làm gì
+                        dialog.dismiss();
+                    })
+                    .setCancelable(false)
+                    .show();
+        }
+    }
 
-                        @Override
-                        public void onCancelled(@NonNull DatabaseError databaseError) {
+    private void changePassword(String oldPassword, String newPassword) {
+        // Kiểm tra mật khẩu cũ và cập nhật mật khẩu mới
+        databaseReference.orderByChild("dangNhap").equalTo(currentUsername)
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        if (dataSnapshot.exists()) {
+                            for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                                DangKi.User user = snapshot.getValue(DangKi.User.class);
+                                if (user != null && user.matKhau.equals(oldPassword)) {
+                                    // Cập nhật mật khẩu mới
+                                    snapshot.getRef().child("matKhau").setValue(newPassword)
+                                            .addOnSuccessListener(aVoid -> {
+                                                AlertDialog.Builder builder = new AlertDialog.Builder(ChangePasswordActivity.this);
+                                                builder.setTitle("Thành công")
+                                                        .setMessage("Đổi mật khẩu thành công!")
+                                                        .setIcon(R.drawable.ic_check_green)
+                                                        .setPositiveButton("OK", (dialog, which) -> finish())
+                                                        .setCancelable(false)
+                                                        .show();
+                                            })
+                                            .addOnFailureListener(e -> {
+                                                AlertDialog.Builder builder = new AlertDialog.Builder(ChangePasswordActivity.this);
+                                                builder.setTitle("Lỗi")
+                                                        .setMessage("Đổi mật khẩu thất bại: " + e.getMessage())
+                                                        .setPositiveButton("OK", (dialog, which) -> dialog.dismiss())
+                                                        .show();
+                                            });
+                                } else {
+                                    tvErrorOldPassword.setText("Mật khẩu cũ không đúng");
+                                    tvErrorOldPassword.setVisibility(View.VISIBLE);
+                                }
+                            }
+                        } else {
                             AlertDialog.Builder builder = new AlertDialog.Builder(ChangePasswordActivity.this);
                             builder.setTitle("Lỗi")
-                                    .setMessage("Lỗi: " + databaseError.getMessage())
+                                    .setMessage("Không tìm thấy thông tin tài khoản!")
                                     .setPositiveButton("OK", (dialog, which) -> dialog.dismiss())
                                     .show();
                         }
-                    });
-        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+                        AlertDialog.Builder builder = new AlertDialog.Builder(ChangePasswordActivity.this);
+                        builder.setTitle("Lỗi")
+                                .setMessage("Lỗi: " + databaseError.getMessage())
+                                .setPositiveButton("OK", (dialog, which) -> dialog.dismiss())
+                                .show();
+                    }
+                });
     }
 }

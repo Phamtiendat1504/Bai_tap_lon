@@ -13,6 +13,7 @@ import android.util.Base64;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -37,7 +38,7 @@ import java.util.Locale;
 public class PostFragment extends Fragment {
 
     private EditText edtFullName, edtPhone, edtPostDate, edtAddress, edtPrice, edtElectricity, edtWater, edtService, edtWifi;
-    private TextView tvCity;
+    private TextView tvCity, tvFullNameError, tvPhoneError, tvPostDateError, tvDistrictError, tvAddressError, tvRoomTypeError, tvPriceError;
     private Spinner spinnerDistrict, spinnerRoomType;
     private ImageView imgPhoto1, imgPhoto2, imgPhoto3;
     private Button btnPost;
@@ -48,6 +49,7 @@ public class PostFragment extends Fragment {
     private String postId;
     private boolean isEditMode = false;
     private String currentUsername;
+    private String selectedDistrict, selectedRoomType;
 
     public PostFragment() {
         // Required empty public constructor
@@ -74,6 +76,15 @@ public class PostFragment extends Fragment {
         imgPhoto2 = view.findViewById(R.id.imgPhoto2);
         imgPhoto3 = view.findViewById(R.id.imgPhoto3);
         btnPost = view.findViewById(R.id.btnPost);
+
+        // Ánh xạ các TextView lỗi
+        tvFullNameError = view.findViewById(R.id.tvFullNameError);
+        tvPhoneError = view.findViewById(R.id.tvPhoneError);
+        tvPostDateError = view.findViewById(R.id.tvPostDateError);
+        tvDistrictError = view.findViewById(R.id.tvDistrictError);
+        tvAddressError = view.findViewById(R.id.tvAddressError);
+        tvRoomTypeError = view.findViewById(R.id.tvRoomTypeError);
+        tvPriceError = view.findViewById(R.id.tvPriceError);
 
         // Lấy username từ Bundle
         Bundle bundle = getArguments();
@@ -152,21 +163,71 @@ public class PostFragment extends Fragment {
     }
 
     private void setupSpinners() {
-        String[] districts = {
-                "Ba Đình", "Hoàn Kiếm", "Hai Bà Trưng", "Đống Đa", "Tây Hồ", "Cầu Giấy", "Thanh Xuân",
+        // Thiết lập Spinner cho Quận
+        String[] districts = {"Chọn quận", "Ba Đình", "Hoàn Kiếm", "Hai Bà Trưng", "Đống Đa", "Tây Hồ", "Cầu Giấy", "Thanh Xuân",
                 "Hoàng Mai", "Long Biên", "Nam Từ Liêm", "Bắc Từ Liêm", "Hà Đông", "Sơn Tây", "Ba Vì",
                 "Chương Mỹ", "Đan Phượng", "Đông Anh", "Gia Lâm", "Hoài Đức", "Mê Linh", "Mỹ Đức",
                 "Phú Xuyên", "Phúc Thọ", "Quốc Oai", "Sóc Sơn", "Thạch Thất", "Thanh Oai", "Thanh Trì",
-                "Thường Tín", "Ứng Hòa"
+                "Thường Tín", "Ứng Hòa"};
+        ArrayAdapter<String> districtAdapter = new ArrayAdapter<>(requireContext(), android.R.layout.simple_spinner_item, districts) {
+            @Override
+            public boolean isEnabled(int position) {
+                return position != 0; // Vô hiệu hóa mục hint
+            }
         };
-        ArrayAdapter<String> districtAdapter = new ArrayAdapter<>(requireContext(), android.R.layout.simple_spinner_item, districts);
         districtAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinnerDistrict.setAdapter(districtAdapter);
+        spinnerDistrict.setSelection(0); // Chọn hint mặc định
 
-        String[] roomTypes = {"Phòng trọ", "Chung cư", "Nhà nguyên căn"};
-        ArrayAdapter<String> roomTypeAdapter = new ArrayAdapter<>(requireContext(), android.R.layout.simple_spinner_item, roomTypes);
+        // Thiết lập Spinner cho Loại phòng
+        String[] roomTypes = {"Chọn loại phòng", "Phòng trọ", "Chung cư", "Nhà nguyên căn"};
+        ArrayAdapter<String> roomTypeAdapter = new ArrayAdapter<>(requireContext(), android.R.layout.simple_spinner_item, roomTypes) {
+            @Override
+            public boolean isEnabled(int position) {
+                return position != 0; // Vô hiệu hóa mục hint
+            }
+        };
         roomTypeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinnerRoomType.setAdapter(roomTypeAdapter);
+        spinnerRoomType.setSelection(0); // Chọn hint mặc định
+
+        // Xử lý sự kiện chọn Quận
+        spinnerDistrict.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                if (position == 0) {
+                    selectedDistrict = null;
+                } else {
+                    selectedDistrict = districts[position];
+                    tvDistrictError.setVisibility(View.GONE);
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+                selectedDistrict = null;
+                tvDistrictError.setVisibility(View.VISIBLE);
+            }
+        });
+
+        // Xử lý sự kiện chọn Loại phòng
+        spinnerRoomType.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                if (position == 0) {
+                    selectedRoomType = null;
+                } else {
+                    selectedRoomType = roomTypes[position];
+                    tvRoomTypeError.setVisibility(View.GONE);
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+                selectedRoomType = null;
+                tvRoomTypeError.setVisibility(View.VISIBLE);
+            }
+        });
     }
 
     private void addNumberFormatWatcher(EditText editText) {
@@ -297,32 +358,80 @@ public class PostFragment extends Fragment {
         String phone = edtPhone.getText().toString().trim();
         String postDate = edtPostDate.getText().toString().trim();
         String city = "Hà Nội";
-        String district = spinnerDistrict.getSelectedItem() != null ? spinnerDistrict.getSelectedItem().toString() : "";
         String address = edtAddress.getText().toString().trim();
-        String roomType = spinnerRoomType.getSelectedItem() != null ? spinnerRoomType.getSelectedItem().toString() : "";
         String price = edtPrice.getText().toString().trim().replaceAll("[^0-9]", "");
         String electricity = edtElectricity.getText().toString().trim().replaceAll("[^0-9]", "");
         String water = edtWater.getText().toString().trim().replaceAll("[^0-9]", "");
         String service = edtService.getText().toString().trim().replaceAll("[^0-9]", "");
         String wifi = edtWifi.getText().toString().trim().replaceAll("[^0-9]", "");
 
-        if (fullName.isEmpty() || phone.isEmpty() || postDate.isEmpty() || address.isEmpty() || price.isEmpty()) {
-            showErrorDialog("Vui lòng điền đầy đủ thông tin bắt buộc");
-            return;
+        // Kiểm tra các trường bắt buộc
+        boolean isValid = true;
+
+        if (fullName.isEmpty()) {
+            tvFullNameError.setVisibility(View.VISIBLE);
+            isValid = false;
+        } else {
+            tvFullNameError.setVisibility(View.GONE);
         }
 
-        String photo1Base64 = imageUri1 != null ? convertImageToBase64(imageUri1) : "";
-        String photo2Base64 = imageUri2 != null ? convertImageToBase64(imageUri2) : "";
-        String photo3Base64 = imageUri3 != null ? convertImageToBase64(imageUri3) : "";
+        if (phone.isEmpty()) {
+            tvPhoneError.setVisibility(View.VISIBLE);
+            isValid = false;
+        } else {
+            tvPhoneError.setVisibility(View.GONE);
+        }
 
-        Post post = new Post(currentUsername, fullName, phone, city, district, address, roomType, price,
-                electricity, water, service, wifi, photo1Base64, photo2Base64, photo3Base64, postDate);
+        if (postDate.isEmpty()) {
+            tvPostDateError.setVisibility(View.VISIBLE);
+            isValid = false;
+        } else {
+            tvPostDateError.setVisibility(View.GONE);
+        }
 
-        String newPostId = databaseReference.push().getKey();
-        if (newPostId != null) {
-            databaseReference.child(newPostId).setValue(post)
-                    .addOnSuccessListener(aVoid -> showSuccessDialog("Đăng bài thành công"))
-                    .addOnFailureListener(e -> showErrorDialog("Đăng bài thất bại: " + e.getMessage()));
+        if (selectedDistrict == null) {
+            tvDistrictError.setVisibility(View.VISIBLE);
+            isValid = false;
+        } else {
+            tvDistrictError.setVisibility(View.GONE);
+        }
+
+        if (address.isEmpty()) {
+            tvAddressError.setVisibility(View.VISIBLE);
+            isValid = false;
+        } else {
+            tvAddressError.setVisibility(View.GONE);
+        }
+
+        if (selectedRoomType == null) {
+            tvRoomTypeError.setVisibility(View.VISIBLE);
+            isValid = false;
+        } else {
+            tvRoomTypeError.setVisibility(View.GONE);
+        }
+
+        if (price.isEmpty()) {
+            tvPriceError.setVisibility(View.VISIBLE);
+            isValid = false;
+        } else {
+            tvPriceError.setVisibility(View.GONE);
+        }
+
+        // Nếu tất cả trường bắt buộc đã được điền, tiến hành đăng bài
+        if (isValid) {
+            String photo1Base64 = imageUri1 != null ? convertImageToBase64(imageUri1) : "";
+            String photo2Base64 = imageUri2 != null ? convertImageToBase64(imageUri2) : "";
+            String photo3Base64 = imageUri3 != null ? convertImageToBase64(imageUri3) : "";
+
+            Post post = new Post(currentUsername, fullName, phone, city, selectedDistrict, address, selectedRoomType, price,
+                    electricity, water, service, wifi, photo1Base64, photo2Base64, photo3Base64, postDate);
+
+            String newPostId = databaseReference.push().getKey();
+            if (newPostId != null) {
+                databaseReference.child(newPostId).setValue(post)
+                        .addOnSuccessListener(aVoid -> showSuccessDialog("Đăng bài thành công"))
+                        .addOnFailureListener(e -> showErrorDialog("Đăng bài thất bại: " + e.getMessage()));
+            }
         }
     }
 
@@ -331,31 +440,79 @@ public class PostFragment extends Fragment {
         String phone = edtPhone.getText().toString().trim();
         String postDate = edtPostDate.getText().toString().trim();
         String city = "Hà Nội";
-        String district = spinnerDistrict.getSelectedItem() != null ? spinnerDistrict.getSelectedItem().toString() : "";
         String address = edtAddress.getText().toString().trim();
-        String roomType = spinnerRoomType.getSelectedItem() != null ? spinnerRoomType.getSelectedItem().toString() : "";
         String price = edtPrice.getText().toString().trim().replaceAll("[^0-9]", "");
         String electricity = edtElectricity.getText().toString().trim().replaceAll("[^0-9]", "");
         String water = edtWater.getText().toString().trim().replaceAll("[^0-9]", "");
         String service = edtService.getText().toString().trim().replaceAll("[^0-9]", "");
         String wifi = edtWifi.getText().toString().trim().replaceAll("[^0-9]", "");
 
-        if (fullName.isEmpty() || phone.isEmpty() || postDate.isEmpty() || address.isEmpty() || price.isEmpty()) {
-            showErrorDialog("Vui lòng điền đầy đủ thông tin bắt buộc");
-            return;
+        // Kiểm tra các trường bắt buộc
+        boolean isValid = true;
+
+        if (fullName.isEmpty()) {
+            tvFullNameError.setVisibility(View.VISIBLE);
+            isValid = false;
+        } else {
+            tvFullNameError.setVisibility(View.GONE);
         }
 
-        String photo1Base64 = imageUri1 != null ? convertImageToBase64(imageUri1) : "";
-        String photo2Base64 = imageUri2 != null ? convertImageToBase64(imageUri2) : "";
-        String photo3Base64 = imageUri3 != null ? convertImageToBase64(imageUri3) : "";
+        if (phone.isEmpty()) {
+            tvPhoneError.setVisibility(View.VISIBLE);
+            isValid = false;
+        } else {
+            tvPhoneError.setVisibility(View.GONE);
+        }
 
-        Post post = new Post(currentUsername, fullName, phone, city, district, address, roomType, price,
-                electricity, water, service, wifi, photo1Base64, photo2Base64, photo3Base64, postDate);
+        if (postDate.isEmpty()) {
+            tvPostDateError.setVisibility(View.VISIBLE);
+            isValid = false;
+        } else {
+            tvPostDateError.setVisibility(View.GONE);
+        }
 
-        if (postId != null) {
-            databaseReference.child(postId).setValue(post)
-                    .addOnSuccessListener(aVoid -> showSuccessDialog("Cập nhật bài đăng thành công"))
-                    .addOnFailureListener(e -> showErrorDialog("Cập nhật thất bại: " + e.getMessage()));
+        if (selectedDistrict == null) {
+            tvDistrictError.setVisibility(View.VISIBLE);
+            isValid = false;
+        } else {
+            tvDistrictError.setVisibility(View.GONE);
+        }
+
+        if (address.isEmpty()) {
+            tvAddressError.setVisibility(View.VISIBLE);
+            isValid = false;
+        } else {
+            tvAddressError.setVisibility(View.GONE);
+        }
+
+        if (selectedRoomType == null) {
+            tvRoomTypeError.setVisibility(View.VISIBLE);
+            isValid = false;
+        } else {
+            tvRoomTypeError.setVisibility(View.GONE);
+        }
+
+        if (price.isEmpty()) {
+            tvPriceError.setVisibility(View.VISIBLE);
+            isValid = false;
+        } else {
+            tvPriceError.setVisibility(View.GONE);
+        }
+
+        // Nếu tất cả trường bắt buộc đã được điền, tiến hành cập nhật bài
+        if (isValid) {
+            String photo1Base64 = imageUri1 != null ? convertImageToBase64(imageUri1) : "";
+            String photo2Base64 = imageUri2 != null ? convertImageToBase64(imageUri2) : "";
+            String photo3Base64 = imageUri3 != null ? convertImageToBase64(imageUri3) : "";
+
+            Post post = new Post(currentUsername, fullName, phone, city, selectedDistrict, address, selectedRoomType, price,
+                    electricity, water, service, wifi, photo1Base64, photo2Base64, photo3Base64, postDate);
+
+            if (postId != null) {
+                databaseReference.child(postId).setValue(post)
+                        .addOnSuccessListener(aVoid -> showSuccessDialog("Cập nhật bài đăng thành công"))
+                        .addOnFailureListener(e -> showErrorDialog("Cập nhật thất bại: " + e.getMessage()));
+            }
         }
     }
 

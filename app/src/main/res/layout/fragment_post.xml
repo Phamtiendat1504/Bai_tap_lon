@@ -62,8 +62,18 @@
                 android:elevation="2dp"
                 android:drawableStart="@android:drawable/ic_menu_edit"
                 android:drawableTint="#2196F3"
-                android:drawablePadding="8dp"
-                android:layout_marginBottom="16dp" />
+                android:drawablePadding="8dp" />
+
+            <TextView
+                android:id="@+id/tvFullNameError"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Vui lòng nhập họ tên"
+                android:textSize="14sp"
+                android:textColor="#FF0000"
+                android:layout_marginTop="4dp"
+                android:layout_marginBottom="12dp"
+                android:visibility="gone" />
 
             <!-- Số điện thoại -->
             <TextView
@@ -90,8 +100,18 @@
                 android:elevation="2dp"
                 android:drawableStart="@android:drawable/ic_menu_call"
                 android:drawableTint="#2196F3"
-                android:drawablePadding="8dp"
-                android:layout_marginBottom="16dp" />
+                android:drawablePadding="8dp" />
+
+            <TextView
+                android:id="@+id/tvPhoneError"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Vui lòng nhập số điện thoại"
+                android:textSize="14sp"
+                android:textColor="#FF0000"
+                android:layout_marginTop="4dp"
+                android:layout_marginBottom="12dp"
+                android:visibility="gone" />
 
             <!-- Ngày đăng bài -->
             <TextView
@@ -118,8 +138,18 @@
                 android:elevation="2dp"
                 android:drawableStart="@android:drawable/ic_menu_recent_history"
                 android:drawableTint="#2196F3"
-                android:drawablePadding="8dp"
-                android:layout_marginBottom="16dp" />
+                android:drawablePadding="8dp" />
+
+            <TextView
+                android:id="@+id/tvPostDateError"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Vui lòng nhập ngày đăng bài"
+                android:textSize="14sp"
+                android:textColor="#FF0000"
+                android:layout_marginTop="4dp"
+                android:layout_marginBottom="12dp"
+                android:visibility="gone" />
 
             <!-- Tỉnh/Thành phố (Cố định là Hà Nội) -->
             <TextView
@@ -161,8 +191,18 @@
                 android:background="@android:drawable/edit_text"
                 android:backgroundTint="#F5F5F5"
                 android:padding="12dp"
-                android:elevation="2dp"
-                android:layout_marginBottom="16dp" />
+                android:elevation="2dp" />
+
+            <TextView
+                android:id="@+id/tvDistrictError"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Vui lòng chọn quận"
+                android:textSize="14sp"
+                android:textColor="#FF0000"
+                android:layout_marginTop="4dp"
+                android:layout_marginBottom="12dp"
+                android:visibility="gone" />
 
             <!-- Địa chỉ -->
             <TextView
@@ -188,8 +228,18 @@
                 android:elevation="2dp"
                 android:drawableStart="@android:drawable/ic_menu_mylocation"
                 android:drawableTint="#2196F3"
-                android:drawablePadding="8dp"
-                android:layout_marginBottom="16dp" />
+                android:drawablePadding="8dp" />
+
+            <TextView
+                android:id="@+id/tvAddressError"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Vui lòng nhập địa chỉ"
+                android:textSize="14sp"
+                android:textColor="#FF0000"
+                android:layout_marginTop="4dp"
+                android:layout_marginBottom="12dp"
+                android:visibility="gone" />
 
             <!-- Loại phòng -->
             <TextView
@@ -208,8 +258,18 @@
                 android:background="@android:drawable/edit_text"
                 android:backgroundTint="#F5F5F5"
                 android:padding="12dp"
-                android:elevation="2dp"
-                android:layout_marginBottom="16dp" />
+                android:elevation="2dp" />
+
+            <TextView
+                android:id="@+id/tvRoomTypeError"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Vui lòng chọn loại phòng"
+                android:textSize="14sp"
+                android:textColor="#FF0000"
+                android:layout_marginTop="4dp"
+                android:layout_marginBottom="12dp"
+                android:visibility="gone" />
 
             <!-- Giá thuê -->
             <TextView
@@ -231,13 +291,23 @@
                 android:textColorHint="#666666"
                 android:inputType="numberDecimal"
                 android:background="@android:drawable/edit_text"
-                android:backgroundTint="#F5F5F5"
-                android:padding="12dp"
-                android:elevation="2dp"
-                android:drawableStart="@android:drawable/ic_menu_info_details"
-                android:drawableTint="#2196F3"
-                android:drawablePadding="8dp"
-                android:layout_marginBottom="16dp" />
+            android:backgroundTint="#F5F5F5"
+            android:padding="12dp"
+            android:elevation="2dp"
+            android:drawableStart="@android:drawable/ic_menu_info_details"
+            android:drawableTint="#2196F3"
+            android:drawablePadding="8dp" />
+
+            <TextView
+                android:id="@+id/tvPriceError"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Vui lòng nhập giá thuê"
+                android:textSize="14sp"
+                android:textColor="#FF0000"
+                android:layout_marginTop="4dp"
+                android:layout_marginBottom="12dp"
+                android:visibility="gone" />
 
             <!-- Tiền điện -->
             <TextView

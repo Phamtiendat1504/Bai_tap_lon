@@ -228,15 +228,7 @@
                 android:scaleType="centerCrop"
                 android:contentDescription="Quảng cáo" />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Nhận ngay voucher Shoppe-Ưu đãi ngập tràn"
-                android:textSize="14sp"
-                android:textColor="#FF5722"
-                android:textStyle="bold"
-                android:layout_gravity="center"
-                android:layout_marginTop="8dp" />
+
         </LinearLayout>
 
         <!-- Quảng cáo 2 -->
@@ -257,15 +249,6 @@
                 android:scaleType="centerCrop"
                 android:contentDescription="Quảng cáo" />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Đi Grab – Nhanh, rẻ, tiện!"
-                android:textSize="14sp"
-                android:textColor="#FF5722"
-                android:textStyle="bold"
-                android:layout_gravity="center"
-                android:layout_marginTop="8dp" />
         </LinearLayout>
 
         <!-- Quảng cáo 3 -->
@@ -286,15 +269,6 @@
                 android:scaleType="centerCrop"
                 android:contentDescription="Quảng cáo" />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Đói bụng? Shopee Food lo ngay!"
-                android:textSize="14sp"
-                android:textColor="#FF5722"
-                android:textStyle="bold"
-                android:layout_gravity="center"
-                android:layout_marginTop="8dp" />
         </LinearLayout>
 
         <!-- Nút thay đổi banner (chỉ hiển thị cho admin) -->
